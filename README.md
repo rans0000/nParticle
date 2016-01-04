@@ -1,0 +1,3 @@
+# nParticles
+
+**# nParticles** is a small particle effect I did after I saw the [website](http://www.rapidvaluetechathon.com/) for techathon at RapidValue. After seeing it, I just couldn't hold myself and I opened up brackets to hack together this work. The original plugin used uses canvas (https://github.com/VincentGarreau/particles.js) and has much more options but for now I'll just do a basic version.

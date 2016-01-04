@@ -1,0 +1,22 @@
+{
+  "name": "nparticle",
+  "description": "A simple particle effect created with D3js and CSS",
+  "main": "html/index.html",
+  "authors": [
+    "Ranjith Raghavan (rans)"
+  ],
+  "license": "ISC",
+  "moduleType": [],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.5.12"
+  }
+}

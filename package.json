@@ -1,0 +1,14 @@
+{
+  "name": "nparticle",
+  "version": "0.1.0",
+  "description": "A simple particle effect created with D3js and CSS",
+  "main": "html/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ranjith Raghavan (rans)",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^0.4.5"
+  }
+}
