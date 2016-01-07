@@ -5,20 +5,21 @@
     "use strict";
     //====================================
     //Particle Class
-    function Particle(container, posX, posY, radius, color){
-        Particle.containerWidth = parseInt(container.attr('width'));
-        Particle.containerHeight = parseInt(container.attr('height'));
-        this.initialize(container, posX, posY, radius, color);
+    function Particle(container, posX, posY, radius, color, config){
+        /*Particle.containerWidth = parseInt(container.attr('width'));
+        Particle.containerHeight = parseInt(container.attr('height'));*/
+        this.config = config;
+        this.initialize(container, posX, posY, radius, color, config);
         this.renderParticle();
     }
     //setting all the common values
-    Particle.maxRadius = 4;
+    /*Particle.maxRadius = 4;
     Particle.minRadius = 1;
     Particle.defaultColor = '#fff';
     Particle.maxHorizontalSpeed = 2;
     Particle.maxVerticalSpeed = 2;
     Particle.containerWidth = undefined;
-    Particle.containerHeight = undefined;
+    Particle.containerHeight = undefined;*/
 
     //this functions creates initial particle
     Particle.prototype.initialize = function(container, posX, posY, radius, color){
@@ -28,14 +29,13 @@
     };
 
     Particle.prototype.resetParticle = function(posX, posY, radius, color){
-        this.radius = radius || (Math.random() * Particle.maxRadius) + Particle.minRadius;
-        this.color = color || Particle.defaultColor;
-        //this.opacity = Math.random();
+        this.radius = radius || (Math.random() * this.config.maxRadius) + this.config.minRadius;
+        this.color = color || this.config.particleColor;
         this.opacity = 0.7;
-        this.horizontalSpeed = Math.random() * Particle.maxHorizontalSpeed * (Math.round(Math.random())?-1 : 1);
-        this.VerticalSpeed = Math.random() * Particle.maxVerticalSpeed * (Math.round(Math.random())?-1 : 1);
-        this.posX = posX || Math.random() * Particle.containerWidth;
-        this.posY = posY || Math.random() * Particle.containerHeight;
+        this.horizontalSpeed = Math.random() * this.config.maxHorizontalSpeed * (Math.round(Math.random())?-1 : 1);
+        this.VerticalSpeed = Math.random() * this.config.maxVerticalSpeed * (Math.round(Math.random())?-1 : 1);
+        this.posX = posX || Math.random() * this.config.elementWidth;
+        this.posY = posY || Math.random() * this.config.elementHeight;
     };
 
     //render a single particle
@@ -60,28 +60,28 @@
         var tempPosY = posY || (this.posY + this.VerticalSpeed);
 
         //reset the particles if they are out of bound
-        if(tempPosX < 0 || tempPosX > Particle.containerWidth){
-            tempPosX = Math.random() * Particle.containerWidth;
+        if(tempPosX < 0 || tempPosX > this.config.elementWidth){
+            tempPosX = Math.random() * this.config.elementWidth;
         }
-        if(tempPosY < 0 || tempPosY > Particle.containerHeight){
-            tempPosY = Math.random() * Particle.containerHeight;
+        if(tempPosY < 0 || tempPosY > this.config.elementHeight){
+            tempPosY = Math.random() * this.config.elementHeight;
         }
 
         this.posX = tempPosX;
         this.posY = tempPosY;
-        console.log(this.posX);
     };
 
     //====================================
     //connectorlines Class
-    function ConnectorLine(x1, y1, x2, y2, lineColor){
+    function ConnectorLine(x1, y1, x2, y2, lineColor, config){
+        this.config = config;
         this.initialize(x1, y1, x2, y2, lineColor);
     }
 
-    ConnectorLine.threshold = 100;
+    //ConnectorLine.threshold = 100;
 
     ConnectorLine.prototype.initialize = function(x1, y1, x2, y2, lineColor){
-        this.color = lineColor || '#fff';
+        this.color = this.config.particleColor;
         this.renderConnectorLines(x1, y1, x2, y2);
     };
 
@@ -91,38 +91,61 @@
         this.x2 = x2;
         this.y2 = y2;
         var distance = Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
-        distance = (ConnectorLine.threshold - distance > 30)? 10 : distance;
-        this.opacity = 1 - (distance / ConnectorLine.threshold);
+        distance = (this.config.maxThreshold - distance > (this.config.maxThreshold - this.config.minThreshold))? this.config.minThreshold : distance;
+        this.opacity = 1 - (distance / this.config.maxThreshold);
     };
 
     //====================================
     //nParticle Class
-    function nParticle(element, elementWidth, elementHeight){
+    function nParticle(element, elementWidth, elementHeight, config){
         var selfObj = this;
         selfObj.particleList = [];
         selfObj.connectorLinesList = [];
-        selfObj.initialize(element, elementWidth, elementHeight);
+        selfObj.config = config;
+        selfObj.initialize(element, elementWidth, elementHeight, selfObj.config);
         setInterval(function(){
             selfObj.animateParticles(elementWidth, elementHeight);
         }, 50);
     }
 
     //setting all the common values
-    nParticle.bgColor = '#398bdd';
-    nParticle.maxParticleCount = 30;
+    //nParticle.bgColor = '#398bdd';
+    //nParticle.maxParticleCount = 10;
 
-    nParticle.prototype.initialize = function(element, elementWidth, elementHeight){
+    nParticle.prototype.initialize = function(element, elementWidth, elementHeight, config){
         this.element = element;
         this.elementWidth = elementWidth;
         this.elementHeight = elementHeight;
 
+        //creating config object
+        this.config = {
+            element: d3.select(element).append('svg'),
+            elementWidth: elementWidth || 500,
+            elementHeight: elementHeight || 500,
+            maxRadius: 4,
+            minRadius: 1,
+            maxHorizontalSpeed: 2,
+            maxVerticalSpeed: 4,
+            maxParticleCount: 20,
+            particleColor: '#fff',
+            minThreshold: 10,
+            maxThreshold: 80,
+            backgroundColor: '#398bdd',
+            fps: 100
+        };
+        for(var key in config){
+            if(config.hasOwnProperty(key)){
+                this.config[key] = config[key];
+            }
+        }
+
         //create the element
-        this.svg = d3.select(element).append('svg')
+        this.svg = this.config.element
             .attr({
-            width: elementWidth,
-            height: elementHeight
+            width: '100%',
+            height: '100%'
         })
-            .style({background: nParticle.bgColor});
+            .style({background: this.config.backgroundColor});
 
         this.svg.append('g')
             .attr({
@@ -135,10 +158,10 @@
     //rendering particles
     nParticle.prototype.animateParticles = function(elementWidth, elementHeight){
         //add particle if there aren't enough
-        if(this.particleList.length < nParticle.maxParticleCount){
+        if(this.particleList.length < this.config.maxParticleCount){
             var randomPosX = Math.random() * elementWidth;
             var randomPosY = Math.random() * elementHeight;
-            var particle = new Particle(this.svg, randomPosX, randomPosY);
+            var particle = new Particle(this.svg, randomPosX, randomPosY, '', '', this.config);
             this.particleList.push(particle);
         }
 
@@ -159,7 +182,7 @@
                 var y2 = this.particleList[j].posY;
                 var distance = Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
                 if(distance < 100){
-                    var line = new ConnectorLine(x1, y1, x2, y2);
+                    var line = new ConnectorLine(x1, y1, x2, y2, '', this.config);
                     this.connectorLinesList.push(line);
                 }
             }
@@ -191,15 +214,15 @@
         lineJoin.enter().append('line');
         lineJoin.exit().remove('line');
         this.svg.select('.lineContainer')
-        .selectAll('line')
-        .attr({
+            .selectAll('line')
+            .attr({
             x1: function(d){return d.x1;},
             y1: function(d){return d.y1;},
             x2: function(d){return d.x2;},
             y2: function(d){return d.y2;},
             stroke: function(d){return d.color;}
         })
-        .style({
+            .style({
             opacity: function(d){return d.opacity > 0.6 ? 0.6 : d.opacity;}
         });
 
