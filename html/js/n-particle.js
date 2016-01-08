@@ -93,7 +93,7 @@
         selfObj.initialize(element, selfObj.config);
         setInterval(function(){
             selfObj.animateParticles();
-        }, 50);
+        }, this.config.animInterval);
     }
 
     nParticle.prototype.initialize = function(element, config){
@@ -117,7 +117,7 @@
             minThreshold: 10,
             maxThreshold: 100,
             backgroundColor: '#398bdd',
-            fps: 100
+            animInterval: 100
         };
         for(var key in config){
             if(config.hasOwnProperty(key)){
