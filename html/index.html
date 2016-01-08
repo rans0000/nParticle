@@ -4,9 +4,6 @@
         <meta charset="UTF-8">
         <title>nParticle Demo</title>
         <link rel="stylesheet" href="css/style.css">
-        <style>
-            #particle-container{width: 500px;height: 500px;}
-        </style>
     </head>
     <body>
         <div id="particle-container"></div>
@@ -15,7 +12,8 @@
         <script>
             (function(){
                 var nParticleconfig = {};
-                var anim = new nParticle('#particle-container', 500, 500);
+                var anim = new nParticle('#particle-container');
+                
             })();
         </script>
     </body>
