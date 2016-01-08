@@ -23,9 +23,9 @@ var anim = new nParticle('#particle-container', {
     maxThreshold: 100,              // Number: The minimum distance between the circle particles to be connected by the line
     minThreshold: 10,               // Number: The minimum distance between two circle particle where the line opacity is at maximum
     backgroundColor: '#398bdd',     // Hex Color String: Background color. Use 'none' to have a transparent background
-    animInterval: 100                        // Integer: How often the animation needs to update (milliseconds). Lower values will make the animation smoother but going too low will affect perfomance.
+    animInterval: 100               // Integer: How often the animation needs to update (milliseconds). Lower values will make the animation smoother but going too low will affect perfomance.
 })
 ```
-
+The partcles are *SVG*, so you cann just use CSS to further style them.
 
 Thanks for my buddy [Sarath](https://github.com/noobe) for helping me figure out some of the issues with the code. Cheers!!

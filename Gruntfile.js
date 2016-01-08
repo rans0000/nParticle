@@ -1,22 +1,28 @@
-/*module.exports = function(grunt) {
+module.exports = function(grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        
-        express: {
-            all: {
-                options: {
-                    bases: 'html',
-                    livereload: false,
-                    port: 4000,
-                    open: 'http://localhost:4000'
+
+        uglify: {
+            my_target: {
+                files: {
+                    'html/js/n-particle.min.js': ['html/js/n-particle.js']
                 }
             }
+        },
+        watch: {
+            scripts: {
+                files: ['html/js/*.js'],
+                tasks: ['uglify'],
+                options: {
+                    spawn: false,
+                },
+            },
         }
     });
 
-    grunt.loadNpmTasks('grunt-express');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('myserver', ['express', 'express-keepalive']);
-    grunt.registerTask('default', ['express']);
-};*/
+    grunt.registerTask('default', ['watch']);
+};
