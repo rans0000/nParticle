@@ -220,6 +220,7 @@
             stroke: function(d){return d.color;}
         })
             .style({
+            //maximum opacity is set to 0.6
             opacity: function(d){return d.opacity > 0.6 ? 0.6 : d.opacity;}
         });
 
