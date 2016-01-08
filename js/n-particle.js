@@ -5,32 +5,22 @@
     "use strict";
     //====================================
     //Particle Class
-    function Particle(container, posX, posY, radius, color, config){
-        /*Particle.containerWidth = parseInt(container.attr('width'));
-        Particle.containerHeight = parseInt(container.attr('height'));*/
+    function Particle(container, posX, posY, config){
         this.config = config;
-        this.initialize(container, posX, posY, radius, color, config);
+        this.initialize(container, posX, posY, config);
         this.renderParticle();
     }
-    //setting all the common values
-    /*Particle.maxRadius = 4;
-    Particle.minRadius = 1;
-    Particle.defaultColor = '#fff';
-    Particle.maxHorizontalSpeed = 2;
-    Particle.maxVerticalSpeed = 2;
-    Particle.containerWidth = undefined;
-    Particle.containerHeight = undefined;*/
 
     //this functions creates initial particle
-    Particle.prototype.initialize = function(container, posX, posY, radius, color){
+    Particle.prototype.initialize = function(container, posX, posY){
         //initial assignments
         this.container = container;
-        this.resetParticle(posX, posY, radius, color);
+        this.resetParticle(posX, posY);
     };
 
-    Particle.prototype.resetParticle = function(posX, posY, radius, color){
-        this.radius = radius || (Math.random() * this.config.maxRadius) + this.config.minRadius;
-        this.color = color || this.config.particleColor;
+    Particle.prototype.resetParticle = function(posX, posY){
+        this.radius = (Math.random() * this.config.maxRadius) + this.config.minRadius;
+        this.color = this.config.particleColor;
         this.opacity = 0.7;
         this.horizontalSpeed = Math.random() * this.config.maxHorizontalSpeed * (Math.round(Math.random())?-1 : 1);
         this.VerticalSpeed = Math.random() * this.config.maxVerticalSpeed * (Math.round(Math.random())?-1 : 1);
@@ -73,14 +63,12 @@
 
     //====================================
     //connectorlines Class
-    function ConnectorLine(x1, y1, x2, y2, lineColor, config){
+    function ConnectorLine(x1, y1, x2, y2, config){
         this.config = config;
-        this.initialize(x1, y1, x2, y2, lineColor);
+        this.initialize(x1, y1, x2, y2);
     }
 
-    //ConnectorLine.threshold = 100;
-
-    ConnectorLine.prototype.initialize = function(x1, y1, x2, y2, lineColor){
+    ConnectorLine.prototype.initialize = function(x1, y1, x2, y2){
         this.color = this.config.particleColor;
         this.renderConnectorLines(x1, y1, x2, y2);
     };
@@ -97,28 +85,26 @@
 
     //====================================
     //nParticle Class
-    function nParticle(element, elementWidth, elementHeight, config){
+    function nParticle(element, config){
         var selfObj = this;
         selfObj.particleList = [];
         selfObj.connectorLinesList = [];
         selfObj.config = config;
-        selfObj.initialize(element, elementWidth, elementHeight, selfObj.config);
+        selfObj.initialize(element, selfObj.config);
         setInterval(function(){
-            selfObj.animateParticles(elementWidth, elementHeight);
+            selfObj.animateParticles();
         }, 50);
     }
 
-    //setting all the common values
-    //nParticle.bgColor = '#398bdd';
-    //nParticle.maxParticleCount = 10;
-
-    nParticle.prototype.initialize = function(element, elementWidth, elementHeight, config){
-        this.element = element;
-        this.elementWidth = elementWidth;
-        this.elementHeight = elementHeight;
+    nParticle.prototype.initialize = function(element, config){
+        var selfObj = this;
+        selfObj.element = d3.select(element);
+        var containerDimensions = selfObj.element.node().getBoundingClientRect();
+        var elementWidth = containerDimensions.width;
+        var elementHeight = containerDimensions.height;
 
         //creating config object
-        this.config = {
+        selfObj.config = {
             element: d3.select(element).append('svg'),
             elementWidth: elementWidth || 500,
             elementHeight: elementHeight || 500,
@@ -129,39 +115,50 @@
             maxParticleCount: 20,
             particleColor: '#fff',
             minThreshold: 10,
-            maxThreshold: 80,
+            maxThreshold: 100,
             backgroundColor: '#398bdd',
             fps: 100
         };
         for(var key in config){
             if(config.hasOwnProperty(key)){
-                this.config[key] = config[key];
+                selfObj.config[key] = config[key];
             }
         }
 
         //create the element
-        this.svg = this.config.element
+        selfObj.svg = selfObj.config.element
             .attr({
             width: '100%',
             height: '100%'
         })
-            .style({background: this.config.backgroundColor});
+            .style({background: selfObj.config.backgroundColor});
 
-        this.svg.append('g')
+        selfObj.svg.append('g')
             .attr({
             class: 'particleContainer',
             transform: 'translate(0, 0)'
         });
-        this.svg.append('g').attr('class', 'lineContainer');
+        selfObj.svg.append('g').attr('class', 'lineContainer');
+        
+        //attaching resize event
+        window.onresize = function(){
+            selfObj.onResize();
+        };
+    };
+    
+    nParticle.prototype.onResize = function(){
+        var containerDimensions = this.element.node().getBoundingClientRect();
+        this.config.elementWidth = containerDimensions.width;
+        this.config.elementHeight = containerDimensions.height;
     };
 
     //rendering particles
-    nParticle.prototype.animateParticles = function(elementWidth, elementHeight){
+    nParticle.prototype.animateParticles = function(){
         //add particle if there aren't enough
         if(this.particleList.length < this.config.maxParticleCount){
-            var randomPosX = Math.random() * elementWidth;
-            var randomPosY = Math.random() * elementHeight;
-            var particle = new Particle(this.svg, randomPosX, randomPosY, '', '', this.config);
+            var randomPosX = Math.random() * this.config.elementWidth;
+            var randomPosY = Math.random() * this.config.elementHeight;
+            var particle = new Particle(this.svg, randomPosX, randomPosY, this.config);
             this.particleList.push(particle);
         }
 
@@ -181,8 +178,8 @@
                 var x2 = this.particleList[j].posX;
                 var y2 = this.particleList[j].posY;
                 var distance = Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
-                if(distance < 100){
-                    var line = new ConnectorLine(x1, y1, x2, y2, '', this.config);
+                if(distance < this.config.maxThreshold){
+                    var line = new ConnectorLine(x1, y1, x2, y2, this.config);
                     this.connectorLinesList.push(line);
                 }
             }
