@@ -19,13 +19,14 @@
     };
 
     Particle.prototype.resetParticle = function(posX, posY){
-        this.radius = (Math.random() * this.config.maxRadius) + this.config.minRadius;
-        this.color = this.config.particleColor;
+		var config = this.config;
+        this.radius = (Math.random() * config.maxRadius) + config.minRadius;
+        this.color = config.particleColor;
         this.opacity = 0.7;
-        this.horizontalSpeed = Math.random() * this.config.maxHorizontalSpeed * (Math.round(Math.random())?-1 : 1);
-        this.VerticalSpeed = Math.random() * this.config.maxVerticalSpeed * (Math.round(Math.random())?-1 : 1);
-        this.posX = posX || Math.random() * this.config.elementWidth;
-        this.posY = posY || Math.random() * this.config.elementHeight;
+        this.horizontalSpeed = Math.random() * config.maxHorizontalSpeed * (Math.round(Math.random())?-1 : 1);
+        this.VerticalSpeed = Math.random() * config.maxVerticalSpeed * (Math.round(Math.random())?-1 : 1);
+        this.posX = posX || Math.random() * config.elementWidth;
+        this.posY = posY || Math.random() * config.elementHeight;
     };
 
     //render a single particle
@@ -46,15 +47,16 @@
 
     //Move the particle
     Particle.prototype.moveParticle = function(posX, posY){
+		var config = this.config;
         var tempPosX = posX || (this.posX + this.horizontalSpeed);
         var tempPosY = posY || (this.posY + this.VerticalSpeed);
 
         //reset the particles if they are out of bound
-        if(tempPosX < 0 || tempPosX > this.config.elementWidth){
-            tempPosX = Math.random() * this.config.elementWidth;
+        if(tempPosX < 0 || tempPosX > config.elementWidth){
+            tempPosX = Math.random() * config.elementWidth;
         }
-        if(tempPosY < 0 || tempPosY > this.config.elementHeight){
-            tempPosY = Math.random() * this.config.elementHeight;
+        if(tempPosY < 0 || tempPosY > config.elementHeight){
+            tempPosY = Math.random() * config.elementHeight;
         }
 
         this.posX = tempPosX;
@@ -147,18 +149,20 @@
     };
     
     nParticle.prototype.onResize = function(){
+		var config = this.config;
         var containerDimensions = this.element.node().getBoundingClientRect();
-        this.config.elementWidth = containerDimensions.width;
-        this.config.elementHeight = containerDimensions.height;
+        config.elementWidth = containerDimensions.width;
+        config.elementHeight = containerDimensions.height;
     };
 
     //rendering particles
     nParticle.prototype.animateParticles = function(){
+		var config = this.config;
         //add particle if there aren't enough
-        if(this.particleList.length < this.config.maxParticleCount){
-            var randomPosX = Math.random() * this.config.elementWidth;
-            var randomPosY = Math.random() * this.config.elementHeight;
-            var particle = new Particle(this.svg, randomPosX, randomPosY, this.config);
+        if(this.particleList.length < config.maxParticleCount){
+            var randomPosX = Math.random() * config.elementWidth;
+            var randomPosY = Math.random() * config.elementHeight;
+            var particle = new Particle(this.svg, randomPosX, randomPosY, config);
             this.particleList.push(particle);
         }
 
@@ -178,8 +182,8 @@
                 var x2 = this.particleList[j].posX;
                 var y2 = this.particleList[j].posY;
                 var distance = Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
-                if(distance < this.config.maxThreshold){
-                    var line = new ConnectorLine(x1, y1, x2, y2, this.config);
+                if(distance < config.maxThreshold){
+                    var line = new ConnectorLine(x1, y1, x2, y2, config);
                     this.connectorLinesList.push(line);
                 }
             }
