@@ -8,11 +8,11 @@
     <body>
         <div id="particle-container"></div>
         <script src="../bower_components/d3/d3.min.js"></script>
-        <script src="js/n-particle.js"></script>
+        <script src="js/n-particle.min.js"></script>
         <script>
             (function(){
                 var nParticleconfig = {};
-                var anim = new nParticle('#particle-container');
+                var anim = new nParticle('#particle-container', {animInterval: 60});
                 
             })();
         </script>
