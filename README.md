@@ -2,6 +2,8 @@
 
 **# nParticles** is a small particle effect I did after I saw the [website](http://www.rapidvaluetechathon.com/) for techathon at RapidValue. After seeing it, I just couldn't hold myself and I opened up brackets to hack together this plugin. The original plugin used uses canvas (https://github.com/VincentGarreau/particles.js) and has much more options but for now I'll just do a basic version.
 
+**[Demo](http://rans0000.github.io/nParticle/)**
+
 ## Usage
 Simply include the javascript & css file *(nParticle.js & nParticle.js)*.
 Pass the html selector to the constructor. The genetrated svg will fill the container.
